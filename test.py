@@ -1,13 +1,15 @@
 #!/usr/bin/python
 
+import getopt
+import sys
 import os
 import re
-import sys
 import time
 import signal
 import random
 import urllib2
 import threading
+
 
 def usage():
     print('  #######################')
